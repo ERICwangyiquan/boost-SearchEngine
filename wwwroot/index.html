@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+    <title>boost search engine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html,
+        body {
+            height: 100%;
+        }
+        /* .container */
+        .container {
+            width: 800px;
+            margin: 0px auto;
+            margin-top: 15px;
+        }
+
+        .container .search {
+            width: 100%;
+            height: 52px;
+        }
+
+        .container .search input {
+            float: left;
+            width: 600px;
+            height: 50px;
+            border: 1px solid black;
+            border-right: none;
+            padding-left: 10px;
+            color: black;
+            font-size: 19px;
+        }
+
+        .container .search button {
+            float: left;
+            width: 150px;
+            height: 52px;
+            background-color: #4e6ef2;
+            color: #FFF;
+            font-size: 21px;
+            font-family:Georgia, 'Times New Roman', Times, serif;
+        }
+        .container .result {
+            width: 100%;
+        }
+        .container .result .item {
+            margin-top: 15px;
+        }
+
+        .container .result .item a {
+            display: block;
+            text-decoration: none;
+            font-size: 20px;
+            color: #4e6ef2;
+        }
+
+        .container .result .item a:hover {
+            text-decoration: underline;
+        }
+        .container .result .item p {
+            margin-top: 5px;
+            font-size: 16px;
+            font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+
+        .container .result .item i{
+            display: block;
+            font-style: normal;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search">
+            <input type="text">
+            <button onclick="Search()">Search</button>
+        </div>
+        <div class="result"> </div>
+        <div>
+            <h3>You can try more key words, E. g. "filesystem"</h3>
+        </div>
+    </div>
+    <script>
+        function Search(){
+            let query = $(".container .search input").val();
+            if(query == '' || query == null){
+                return;
+            }
+            console.log("query = " + query);
+
+            $.ajax({
+                type: "GET",
+                url: "/s?word=" + query,
+                success: function(data){
+                    console.log(data);
+                    BuildHtml(data);
+                }
+            });
+        }
+
+        function BuildHtml(data){
+            if(data == '' || data == null){
+                document.write("No results for your input");
+            }
+            let result_lable = $(".container .result");
+            result_lable.empty();
+
+            for( let elem of data){
+                // console.log(elem.title);
+                // console.log(elem.url);
+                let a_lable = $("<a>", {
+                    text: elem.title,
+                    href: elem.url,
+                    target: "_blank"
+                });
+                let p_lable = $("<p>", {
+                    text: elem.desc
+                });
+                let i_lable = $("<i>", {
+                    text: elem.url
+                });
+                let div_lable = $("<div>", {
+                    class: "item"
+                });
+                a_lable.appendTo(div_lable);
+                p_lable.appendTo(div_lable);
+                i_lable.appendTo(div_lable);
+                div_lable.appendTo(result_lable);
+            }
+            console.log("No more results for this input");
+        }
+    </script>
+</body>
+</html>
